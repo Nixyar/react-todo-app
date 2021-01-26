@@ -1,25 +1,32 @@
-import logo from './logo.svg';
+import React from "react";
 import './App.css';
+import AppHeader from "./components/App-header/AppHeader";
+import SearchPanel from "./components/Search-panel/SearchPanel";
+import PostStatusFilter from "./components/Post-status-filter/PostStatusFilter";
+import PostList from "./components/Post-list/PostList";
+import PostAddForm from "./components/Post-add-form/PostAddForm";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const posts = [
+        {label: 'Post 1', important: true, like: false},
+        {label: 'Post 2', important: false, like: true},
+        {label: 'Post 3', important: false, like: false},
+        9,
+        {},
+        []
+    ]
+
+    return (
+        <div className="app">
+            <AppHeader/>
+            <div className="search-panel d-flex">
+                <SearchPanel/>
+                <PostStatusFilter/>
+            </div>
+            <PostList postData={posts}/>
+            <PostAddForm/>
+        </div>
+    );
 }
 
 export default App;
