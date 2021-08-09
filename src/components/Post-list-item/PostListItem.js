@@ -38,7 +38,7 @@ export default class PostListItem extends Component {
         }
 
         return (
-            <div className={classNames}>
+            <div className={classNames} onDoubleClick={this.onLike}>
             <span className="app-list-item-label">
                 {label}
             </span>
@@ -49,7 +49,7 @@ export default class PostListItem extends Component {
                     <button type="submit" className="btn-trash btn-sm">
                         <i className="fa fa-trash-o"/>
                     </button>
-                    <i className="fa fa-heart" onClick={this.onLike}/>
+                    <i className="fa fa-heart"/>
                 </div>
             </div>
         )
