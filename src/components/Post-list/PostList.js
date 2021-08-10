@@ -3,12 +3,13 @@ import './PostList.css'
 import PostListItem from "../Post-list-item/PostListItem";
 import {ListGroup} from "reactstrap";
 
-const PostList = (props) => {
-    const itemsPosts = props.postData.map((item, i) => {
+const PostList = ({postData, onDeleted}) => {
+    const elements = postData.map(item => {
+        const {id, ...itemPost} = item;
         if (checkObject(item)) {
             return (
-                <li className="list-group-item" key={`post-id-${i}`}>
-                    <PostListItem label={item.label} important={item.important} like={item.like}/>
+                <li className="list-group-item" key={id}>
+                    <PostListItem {...itemPost} onDelete={() => onDeleted(id)}/>
                 </li>
             )
         } else {
@@ -24,7 +25,7 @@ const PostList = (props) => {
 
     return (
         <ListGroup className="app-list list-group">
-            {itemsPosts}
+            {elements}
         </ListGroup>
     )
 }
