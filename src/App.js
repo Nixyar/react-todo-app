@@ -14,12 +14,31 @@ export default class App extends Component {
                 {label: 'Post 1', important: true, like: false, id: 1},
                 {label: 'Post 2', important: false, like: true, id: 2},
                 {label: 'Post 3', important: false, like: false, id: 3},
-            ]
+            ],
+            term: ''
         };
         this.deletePostItem = this.deletePostItem.bind(this)
         this.addPost = this.addPost.bind(this)
+        this.onToggleLike = this.onToggleLike.bind(this)
+        this.onToggleImportant = this.onToggleImportant.bind(this)
+        this.searchPost = this.searchPost.bind(this)
+        this.updateSearch = this.updateSearch.bind(this)
 
         this.maxId = 4;
+    }
+
+    updateSearch(term) {
+        this.setState({term})
+    }
+
+    searchPost(items, term) {
+        if (!term.length) {
+            return items;
+        }
+
+        return items.filter(item => {
+            return item.label.toLowerCase().match(term.toLowerCase());
+        })
     }
 
     deletePostItem(id) {
@@ -40,7 +59,7 @@ export default class App extends Component {
             //
             // const newArr = [...before, ...after];
 
-            // Мой способ на фильтрах в одну строчку и, о ЧУДО! Он работает...
+            // Мой способ на фильтрах в одну строчку и, о ЧУДО! Он работает правильно, так как фильтрр иммутабельный...
             const postsFilter = posts.filter(val => val.id !== id);
 
             return {
@@ -61,7 +80,6 @@ export default class App extends Component {
                 posts: newArr
             }
         })
-        console.log(this.state.posts)
     }
 
     generatePostId() {
@@ -77,15 +95,45 @@ export default class App extends Component {
         return array.join(',');
     }
 
+    onToggleLike(id) {
+        this.changeStatusInPost(true, id);
+    }
+
+    onToggleImportant(id) {
+        this.changeStatusInPost(false, id);
+    }
+
+    changeStatusInPost(liked = false, id) {
+        this.setState(({posts}) => {
+            const index = posts.findIndex(elem => elem.id === id);
+            const postForIndex = posts[index];
+            const changeLikePost = liked ? {...postForIndex, like: !postForIndex.like} : {
+                ...postForIndex,
+                important: !postForIndex.important
+            };
+            const newArr = [...posts.slice(0, index), changeLikePost, ...posts.slice(index + 1)];
+            return {
+                posts: newArr
+            }
+        });
+    }
+
     render() {
+        const {posts, term} = this.state;
+        const visiblePosts = this.searchPost(posts, term);
+        const postsLength = posts.length;
+        const liked = posts.filter(val => val.like === true).length;
         return (
             <div className="app">
-                <AppHeader/>
+                <AppHeader posts={postsLength} liked={liked}/>
                 <div className="search-panel d-flex">
-                    <SearchPanel/>
+                    <SearchPanel inputText={term} updateSearch={this.updateSearch}/>
                     <PostStatusFilter/>
                 </div>
-                <PostList postData={this.state.posts} onDeleted={this.deletePostItem}/>
+                <PostList onToggleLike={this.onToggleLike}
+                          onToggleImportant={this.onToggleImportant}
+                          onDeleted={this.deletePostItem}
+                          postData={visiblePosts}/>
                 <PostAddForm addPost={this.addPost}/>
             </div>
         );
